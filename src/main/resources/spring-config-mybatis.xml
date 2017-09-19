@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.1.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-4.1.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.1.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-4.1.xsd"
+	default-lazy-init="false">
+
+	<!-- mybatis配置 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- spring中数据源引用 -->
+		<property name="dataSource" ref="dataSource" />
+		<!-- Mybatis自身的配置文件，一般用来声明别名 -->
+	    <property name="configLocation" value="classpath:mybatis/mybatis-sqlconfig.xml" /> 
+		<!-- mybatis的映射文件 -->
+		<property name="mapperLocations" value="classpath:mappers/*/*Dao.xml" />
+		<!-- 要映射类的包路径，如果使用了这种方式，则configLocation中不必再进行声明 -->
+		<property name="typeAliasesPackage" value="com.monee.system"/>
+		<property name="plugins">
+			<array>
+				<!-- 转驼峰拦截器 -->
+				<!-- <bean class="com.gohuinuo.common.mybatis.CameHumpInterceptor"/> -->
+				<!-- 分页拦截器 -->
+				<bean class="com.github.pagehelper.PageHelper">
+					<property name="properties">
+						<value>
+							dialect=mysql
+							reasonable=true
+						</value>
+					</property>
+				</bean>
+			</array>
+		</property>
+	</bean>
+
+	<!-- 自动扫描映射器 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.*.*.dao" />
+		<!-- 当指定了annotationClass的时候，MapperScannerConfigurer将只注册使用了annotationClass注解标记的接口 -->
+        <property name="annotationClass" value="com.monee.system.mybatis.MyBatisDao"/>
+	</bean>
+	
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate"	scope="prototype">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+		<constructor-arg index="1" value="BATCH" /><!--- 如果想要进行批量操作可加入这个属性 --> 
+	</bean>
+
+</beans>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.monee.system.dao.TestDao">
+
+	<select id="findNames" resultType="String" parameterType="String">
+	    select username from sys_user
+	</select>
+	
+	
+	<select id="findInfo" resultType="String" parameterType="String">
+	    delete from test
+	</select>
+	
+</mapper>
